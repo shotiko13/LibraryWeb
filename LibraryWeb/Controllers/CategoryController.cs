@@ -35,6 +35,7 @@ namespace LibraryWeb.Controllers
             {
                 _db.Categories.Add(obj);
                 _db.SaveChanges();
+                TempData["success"] = "Created Successfullly";
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -67,9 +68,41 @@ namespace LibraryWeb.Controllers
             {
                 _db.Categories.Update(obj);
                 _db.SaveChanges();
+                TempData["success"] = "Updated Successfullly";
                 return RedirectToAction("Index");
             }
             return View(obj);
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var category = _db.Categories.Find(id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePOST(int? id)
+        {
+            var toDelete = _db.Categories.Find(id);
+            if (toDelete == null)
+            {
+                return NotFound();
+            }
+            _db.Categories.Remove(toDelete);
+            _db.SaveChanges();
+            TempData["success"] = "Deleted Successfullly";
+
+            return RedirectToAction("Index");
         }
     }
 }
